@@ -1,0 +1,14 @@
+[submodule "growbot_msg"]
+    path = src/growbot_msg
+    url = https://github.com/GrowbotHub/growbot_msg.git
+    branch = master
+
+[submodule "growbot_rpi"]
+	path = src/growbot_rpi
+	url = https://github.com/GrowbotHub/growbot_rpi.git
+    branch = lukic
+
+[submodule "growbot_tlc"]
+    path = src/growbot_tlc
+    url = https://github.com/GrowbotHub/growbot_tlc.git
+    branch = lukic
