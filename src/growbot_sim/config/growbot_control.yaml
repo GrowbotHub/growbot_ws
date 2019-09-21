@@ -1,0 +1,9 @@
+growbot:
+  joint_state_controller:
+    type: "joint_state_controller/JointStateController"
+    publish_rate: 60
+
+  carousel_controller:
+    type: effort_controllers/JointPositionController
+    joint: carousel_center_join
+    pid: {p: 100.0, i: 0.01, d: 10.0}

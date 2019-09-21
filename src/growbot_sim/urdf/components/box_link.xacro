@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+
+<robot name="growbot" 
+    xmlns:xacro="https://www.ros.org/wiki/xacro">
+
+    <xacro:macro name="box_link" params="name x y z m">
+        <link name="${name}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <box size="${x} ${y} ${z}" />
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <box size="${x} ${y} ${z}" />
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="${m}" />
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <box_inertia m="${m}" x="${x}" y="${y}" z="${z}" />
+            </inertial>
+        </link>
+    </xacro:macro>
+</robot>

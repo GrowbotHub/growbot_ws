@@ -1,0 +1,20 @@
+<launch>
+    <arg name="rviz" default="false" />
+
+    <rosparam file="$(find growbot_sim)/config/growbot_control.yaml" command="load"/>
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="/growbot" args="carousel_controller joint_state_controller"/>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+        <remap from="/joint_states" to="/growbot/joint_states" />
+    </node>
+
+    <!-- Gazebo -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="paused" default="false"/>
+    </include>
+
+    <!-- Robot model -->
+    <param name="robot_description" command="$(find xacro)/xacro '$(find growbot_sim)/urdf/growbot.urdf.xacro'" />
+    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -model growbot -param robot_description -x 0 -y -0 -z 0"/>
+
+    <include if="$(eval rviz)" file="$(find growbot_sim)/launch/rviz.launch"></include>
+</launch>
