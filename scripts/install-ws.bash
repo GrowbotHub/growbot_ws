@@ -13,4 +13,4 @@ sudo ../src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release
 
 
 # Install WS specific packages
-pip install rospkg smbus schedule gpiozero flask picamera
+pip install rospkg smbus schedule gpiozero flask flask-cors picamera

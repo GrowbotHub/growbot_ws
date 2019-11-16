@@ -3,11 +3,14 @@
 import os
 import json
 from flask import Flask, request
+from flask_cors import CORS
 import rospy
 from growbothub_tlc.srv import DeviceReadWrite, DeviceSummary
 
 
 app = Flask(__name__)
+CORS(app)
+
 device_read = None
 device_write = None
 device_summary = None
