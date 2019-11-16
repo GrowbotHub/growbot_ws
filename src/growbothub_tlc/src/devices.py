@@ -3,9 +3,11 @@
 from gpiozero import Device, DigitalOutputDevice
 import json
 import os
+import io
 import time
 import smbus
 import rospy
+import base64
 from growbothub_tlc.srv import DeviceReadWrite, DeviceSummary
 
 
@@ -13,6 +15,7 @@ if 'DRY_RUN' in os.environ:
     from gpiozero.pins.mock import MockFactory
     Device.pin_factory = MockFactory()
 else:
+    from picamera import PiCamera
     from gpiozero.pins.native import NativeFactory
     Device.pin_factory = NativeFactory()
 
@@ -71,6 +74,14 @@ class RelayDevice(DeviceInterface):
 
 
 class CameraDevice(DeviceInterface):
+    def read(self, command):
+        with PiCamera() as camera:
+            stream = io.BytesIO()
+            camera.resolution = 'VGA'
+            camera.capture(stream, 'jpeg')
+            encoded = str(base64.b64encode(stream.getvalue()))
+            return { 'base64': 'data:image/jpeg;base64,{}'.format(encoded) }
+
     def summary(self):
         return { 'type': 'camera' }
 

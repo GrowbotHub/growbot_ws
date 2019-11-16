@@ -38,6 +38,6 @@ if __name__ == "__main__":
     device_write = rospy.ServiceProxy('device_write', DeviceReadWrite)
     device_summary = rospy.ServiceProxy('device_summary', DeviceSummary)
 
-    port = int(os.environ.get('PORT', 5001))
+    port = int(os.environ.get('PORT', 8000))
     app.debug = True
     app.run(host='0.0.0.0', port=port, threaded=True)
