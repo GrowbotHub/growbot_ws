@@ -1,0 +1,8 @@
+<launch>
+    <env name="DRY_RUN" value="$(optenv DRY_RUN 1)" />
+    <env name="DIST_DATA" value="$(optenv DIST_DATA /home/pi/data)" />
+
+	<node pkg="growbothub_tlc" type="devices.py" name="devices" output="screen" />
+    <!-- node pkg="growbothub_tlc" type="web.py" name="web" output="screen" /-->
+    <node pkg="growbothub_tlc" type="scheduler.py" name="scheduler" output="screen" />
+</launch>
