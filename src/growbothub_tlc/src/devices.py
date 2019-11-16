@@ -135,7 +135,7 @@ def device_summary_cb(args):
 
 
 if __name__ == "__main__":
-    DeviceManager.add('lights', RelayDevice(5))
+    DeviceManager.add('lights', RelayDevice(16))
     DeviceManager.add('temp', TH02Device())
     DeviceManager.add('camera', CameraDevice())
     print(DeviceManager.summary())

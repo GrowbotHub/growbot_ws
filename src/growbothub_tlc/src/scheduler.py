@@ -43,7 +43,7 @@ def take_picture():
     img_name = 'image_{}.jpg'.format(timestamp_str)
     path = os.path.join(folder, img_name)
 
-    readings = device_read('camera', '').readings
+    readings = json.loads(device_read('camera', '').readings)
     image = base64.b64decode(readings['base64'].split(',')[1])
     with open(path, 'wb') as f:
         f.write(image)
@@ -61,16 +61,17 @@ def system_verification():
     time.sleep(1)
     print('Testing devices...')
     meassure_temperature()
-    take_picture()
 
     if json.loads(device_read('lights', '').readings)['value'] == '1':
         turn_lights_off()
-        time.sleep(1)
         turn_lights_on()
+        take_picture()
     else:
         turn_lights_on()
         time.sleep(1)
+        take_picture()
         turn_lights_off()
+    take_picture()
     print('Devices tested')
 
 
