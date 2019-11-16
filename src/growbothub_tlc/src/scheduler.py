@@ -5,6 +5,7 @@ import time
 import json
 import rospy
 import os
+import base64
 import sys
 from datetime import datetime
 from growbothub_tlc.srv import DeviceReadWrite
@@ -26,15 +27,26 @@ DIST_DATA = os.environ['DIST_DATA']
 
 
 def turn_lights_on(): 
-    print('turn_lights_on') 
+    device_write('lights', '{ "value": "1" }')
   
 
 def turn_lights_off(): 
-    print('turn_lights_off') 
+    device_write('lights', '{ "value": "0" }')
   
 
-def take_picture(): 
-    print('take picture') 
+def take_picture():
+    folder = os.path.join(DIST_DATA, 'images')
+    if not os.path.exists(folder):
+		os.makedirs(folder)
+
+    timestamp_str = datetime.now().strftime('%y-%m-%d_%H-%M-%S')
+    img_name = 'image_{}.jpg'.format(timestamp_str)
+    path = os.path.join(folder, img_name)
+
+    readings = device_read('camera', '').readings
+    image = base64.b64decode(readings['base64'].split(',')[1])
+    with open(path, 'wb') as f:
+        f.write(image)
 
 
 def meassure_temperature():
@@ -44,6 +56,22 @@ def meassure_temperature():
     with open(os.path.join(DIST_DATA, 'temp.csv'), 'a') as f:
         f.write('{},{},{}\n'.format(epoch, params['temperature'], params['humidity']))
 
+
+def system_verification():
+    time.sleep(1)
+    print('Testing devices...')
+    meassure_temperature()
+    take_picture()
+
+    if json.loads(device_read('lights', '').readings)['value'] == '1':
+        turn_lights_off()
+        time.sleep(1)
+        turn_lights_on()
+    else:
+        turn_lights_on()
+        time.sleep(1)
+        turn_lights_off()
+    print('Devices tested')
 
 
 if __name__ == "__main__":
@@ -57,6 +85,8 @@ if __name__ == "__main__":
 
     device_read = rospy.ServiceProxy('device_read', DeviceReadWrite)
     device_write = rospy.ServiceProxy('device_write', DeviceReadWrite)
+
+    system_verification()
 
     while not rospy.is_shutdown():
         schedule.run_pending()
