@@ -4,7 +4,7 @@ sudo rosdep init
 rosdep update
 
 # Add internal and non-published dependencies
-rosinstall_generator ros_comm --rosdistro melodic --deps --wet-only --tar > melodic-ros_comm-wet.rosinstall
+rosinstall_generator rosauth ros_comm --rosdistro melodic --deps --wet-only --tar > melodic-ros_comm-wet.rosinstall
 wstool init -j3 ./src melodic-ros_comm-wet.rosinstall
 git clone --depth=1 https://github.com/RobotWebTools/rosbridge_suite.git src/rosbridge_suite
 
