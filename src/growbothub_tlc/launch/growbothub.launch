@@ -8,4 +8,6 @@
     <node pkg="growbothub_tlc" type="devices.py" name="devices" output="screen" />
     <node pkg="growbothub_tlc" type="web.py" name="web" output="screen" if="$(eval web)"  />
     <node pkg="growbothub_tlc" type="scheduler.py" name="scheduler" output="screen" />
+
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" /> 
 </launch>
