@@ -56,24 +56,28 @@ def meassure_temperature():
     with open(os.path.join(DIST_DATA, 'temp.csv'), 'a') as f:
         f.write('{},{},{}\n'.format(epoch, params['temperature'], params['humidity']))
 
+def turn_pumps_off():
+    device_write('pumps', json.dumps({'value': 0}))
+
+
+def turn_pumps_on():
+    device_write('pumps', json.dumps({'value': 1}))
 
 def system_verification():
     time.sleep(1)
     print('Testing devices...')
     meassure_temperature()
 
-    if json.loads(device_read('lights', '').readings)['value'] == '1':
-        turn_lights_off()
-        turn_lights_on()
-        take_picture()
-    else:
-        turn_lights_on()
-        time.sleep(1)
-        take_picture()
-        turn_lights_off()
+    turn_lights_on()
+    turn_pumps_on()
+    time.sleep(3)
+    turn_lights_off()
+    turn_pumps_off()
     take_picture()
     print('Devices tested')
-
+    now = time.localtime().tm_hour
+    if now >= 7 and now <= 20:
+        turn_lights_on()
 
 if __name__ == "__main__":
     rospy.init_node('scheduler')
@@ -83,6 +87,28 @@ if __name__ == "__main__":
     schedule.every(1).minutes.do(meassure_temperature) 
     schedule.every().day.at('07:00').do(turn_lights_on) 
     schedule.every().day.at('20:00').do(turn_lights_off) 
+    schedule.every().hour.at(':00').do(turn_pumps_on)
+    schedule.every().hour.at(':01').do(turn_pumps_off)
+    schedule.every().hour.at(':05').do(turn_pumps_on)
+    schedule.every().hour.at(':06').do(turn_pumps_off)
+    schedule.every().hour.at(':10').do(turn_pumps_on)
+    schedule.every().hour.at(':12').do(turn_pumps_off)
+    schedule.every().hour.at(':16').do(turn_pumps_on)
+    schedule.every().hour.at(':18').do(turn_pumps_off)
+    schedule.every().hour.at(':22').do(turn_pumps_on)
+    schedule.every().hour.at(':24').do(turn_pumps_off)
+    schedule.every().hour.at(':28').do(turn_pumps_on)
+    schedule.every().hour.at(':30').do(turn_pumps_off)
+    schedule.every().hour.at(':34').do(turn_pumps_on)
+    schedule.every().hour.at(':36').do(turn_pumps_off)
+    schedule.every().hour.at(':40').do(turn_pumps_on)
+    schedule.every().hour.at(':42').do(turn_pumps_off)
+    schedule.every().hour.at(':46').do(turn_pumps_on)
+    schedule.every().hour.at(':48').do(turn_pumps_off)
+    schedule.every().hour.at(':52').do(turn_pumps_on)
+    schedule.every().hour.at(':54').do(turn_pumps_off)
+    schedule.every().hour.at(':58').do(turn_pumps_on)
+    schedule.every().hour.at(':59').do(turn_pumps_off)
 
     device_read = rospy.ServiceProxy('device_read', DeviceReadWrite)
     device_write = rospy.ServiceProxy('device_write', DeviceReadWrite)

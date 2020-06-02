@@ -5,7 +5,7 @@ import json
 import os
 import io
 import time
-import smbus
+import smbus2 as smbus
 import rospy
 import base64
 from growbothub_tlc.srv import DeviceReadWrite, DeviceSummary
@@ -78,12 +78,30 @@ class CameraDevice(DeviceInterface):
         with PiCamera() as camera:
             stream = io.BytesIO()
             camera.resolution = 'VGA'
+	    #2592 x 1944'
             camera.capture(stream, 'jpeg')
             encoded = str(base64.b64encode(stream.getvalue()))
             return { 'base64': 'data:image/jpeg;base64,{}'.format(encoded) }
 
     def summary(self):
         return { 'type': 'camera' }
+
+
+class GroveADCDevice(DeviceInterface):
+    def __init__(self, channel=0):
+        self._bus = smbus.SMBus(1)
+        self._channel = channel
+
+    def read(self, command):
+        return { 'value': self.get_voltage() }
+
+    def get_voltage(self):
+        self._bus.write_byte(0x04, 0x20 + self._channel)
+        res = self._bus.read_word_data(0x04, 0x20 + self._channel)
+        return res
+
+    def summary(self):
+        return { 'type': 'adc' }
 
 
 class TH02Device(DeviceInterface):
@@ -136,8 +154,13 @@ def device_summary_cb(args):
 
 if __name__ == "__main__":
     DeviceManager.add('lights', RelayDevice(16))
+    DeviceManager.add('pumps', RelayDevice(5))
     DeviceManager.add('temp', TH02Device())
     DeviceManager.add('camera', CameraDevice())
+    DeviceManager.add('ev', GroveADCDevice(channel=0))
+    
+    # print(DeviceManager.get('ev').get_voltage())
+    # exit()
     print(DeviceManager.summary())
 
     rospy.init_node('devices')
