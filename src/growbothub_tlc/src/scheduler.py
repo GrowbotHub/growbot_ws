@@ -48,13 +48,12 @@ def take_picture():
     with open(path, 'wb') as f:
         f.write(image)
 
-
-def meassure_temperature():
-    epoch = timestamp(datetime.now())
-    readings = device_read('temp', '').readings
-    params = json.loads(readings)
-    with open(os.path.join(DIST_DATA, 'temp.csv'), 'a') as f:
-        f.write('{},{},{}\n'.format(epoch, params['temperature'], params['humidity']))
+#def meassure_temperature():
+#    epoch = timestamp(datetime.now())
+#    readings = device_read('temp', '').readings
+#    params = json.loads(readings)
+#    with open(os.path.join(DIST_DATA, 'temp.csv'), 'a') as f:
+#        f.write('{},{},{}\n'.format(epoch, params['temperature'], params['humidity']))
 
 def turn_pumps_off():
     device_write('pumps', json.dumps({'value': 0}))
@@ -84,7 +83,7 @@ if __name__ == "__main__":
     r = rospy.Rate(1)
 
     schedule.every(60).minutes.do(take_picture) 
-    schedule.every(1).minutes.do(meassure_temperature) 
+#    schedule.every(1).minutes.do(meassure_temperature) 
     schedule.every().day.at('07:00').do(turn_lights_on) 
     schedule.every().day.at('20:00').do(turn_lights_off) 
     schedule.every().hour.at(':00').do(turn_pumps_on)
