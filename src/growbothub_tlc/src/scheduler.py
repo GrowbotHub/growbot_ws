@@ -34,19 +34,19 @@ def turn_lights_off():
     device_write('lights', '{ "value": "0" }')
   
 
-def take_picture():
-    folder = os.path.join(DIST_DATA, 'images')
-    if not os.path.exists(folder):
-		os.makedirs(folder)
+#def take_picture():
+#    folder = os.path.join(DIST_DATA, 'images')
+#    if not os.path.exists(folder):
+#		os.makedirs(folder)
 
-    timestamp_str = datetime.now().strftime('%y-%m-%d_%H-%M-%S')
-    img_name = 'image_{}.jpg'.format(timestamp_str)
-    path = os.path.join(folder, img_name)
+#    timestamp_str = datetime.now().strftime('%y-%m-%d_%H-%M-%S')
+#    img_name = 'image_{}.jpg'.format(timestamp_str)
+#    path = os.path.join(folder, img_name)
 
-    readings = json.loads(device_read('camera', '').readings)
-    image = base64.b64decode(readings['base64'].split(',')[1])
-    with open(path, 'wb') as f:
-        f.write(image)
+#    readings = json.loads(device_read('camera', '').readings)
+#    image = base64.b64decode(readings['base64'].split(',')[1])
+#    with open(path, 'wb') as f:
+#        f.write(image)
 
 #def meassure_temperature():
 #    epoch = timestamp(datetime.now())
@@ -65,14 +65,14 @@ def turn_pumps_on():
 def system_verification():
     time.sleep(1)
     print('Testing devices...')
-    meassure_temperature()
+#    meassure_temperature()
 
     turn_lights_on()
     turn_pumps_on()
     time.sleep(3)
     turn_lights_off()
     turn_pumps_off()
-    take_picture()
+#    take_picture()
     print('Devices tested')
     now = time.localtime().tm_hour
     if now >= 7 and now <= 20:
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     rospy.init_node('scheduler')
     r = rospy.Rate(1)
 
-    schedule.every(60).minutes.do(take_picture) 
+#    schedule.every(60).minutes.do(take_picture) 
 #    schedule.every(1).minutes.do(meassure_temperature) 
     schedule.every().day.at('07:00').do(turn_lights_on) 
     schedule.every().day.at('20:00').do(turn_lights_off) 

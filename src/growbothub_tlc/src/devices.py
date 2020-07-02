@@ -59,7 +59,7 @@ class DeviceInterface():
 
 
 class RelayDevice(DeviceInterface):
-    def __init__(self, pin=5):
+    def __init__(self, pin=8):
         self.dev = None
         self.dev = DigitalOutputDevice(pin)
 
@@ -73,18 +73,18 @@ class RelayDevice(DeviceInterface):
         return { 'type': 'relay', 'pin': str(self.dev.pin) }
 
 
-class CameraDevice(DeviceInterface):
-    def read(self, command):
-        with PiCamera() as camera:
-            stream = io.BytesIO()
-            camera.resolution = 'VGA'
+#class CameraDevice(DeviceInterface):
+#    def read(self, command):
+#        with PiCamera() as camera:
+#            stream = io.BytesIO()
+#            camera.resolution = 'VGA'
 	    #2592 x 1944'
-            camera.capture(stream, 'jpeg')
-            encoded = str(base64.b64encode(stream.getvalue()))
-            return { 'base64': 'data:image/jpeg;base64,{}'.format(encoded) }
+#            camera.capture(stream, 'jpeg')
+#            encoded = str(base64.b64encode(stream.getvalue()))
+#            return { 'base64': 'data:image/jpeg;base64,{}'.format(encoded) }
 
-    def summary(self):
-        return { 'type': 'camera' }
+#    def summary(self):
+#        return { 'type': 'camera' }
 
 
 class GroveADCDevice(DeviceInterface):
@@ -104,36 +104,36 @@ class GroveADCDevice(DeviceInterface):
         return { 'type': 'adc' }
 
 
-class TH02Device(DeviceInterface):
-    def __init__(self, bus=None):
-        self._bus = bus
-        if self._bus is None:
-            try:
-                self._bus = smbus.SMBus(1)
-            except Exception as e:
-                print(e)
+#class TH02Device(DeviceInterface):
+#    def __init__(self, bus=None):
+#        self._bus = bus
+#        if self._bus is None:
+#            try:
+#                self._bus = smbus.SMBus(1)
+#            except Exception as e:
+#                print(e)
 
-    def get_temperature_humidity(self):
-        self._bus.write_byte_data(0x40, 0x03, 0x11)
-        time.sleep(0.5)
-        data = self._bus.read_i2c_block_data(0x40, 0x00, 3)
-        temp = ((data[1] * 256 + (data[2] & 0xFC))/ 4.0) / 32.0 - 50.0
+#    def get_temperature_humidity(self):
+#        self._bus.write_byte_data(0x40, 0x03, 0x11)
+#        time.sleep(0.5)
+#        data = self._bus.read_i2c_block_data(0x40, 0x00, 3)
+#        temp = ((data[1] * 256 + (data[2] & 0xFC))/ 4.0) / 32.0 - 50.0
 
-        self._bus.write_byte_data(0x40, 0x03, 0x01)
-        time.sleep(0.5)
-        data = self._bus.read_i2c_block_data(0x40, 0x00, 3)
-        humidity = ((data[1] * 256 + (data[2] & 0xF0)) / 16.0) / 16.0 - 24.0
-        humidity = humidity - (((humidity * humidity) * (-0.00393)) + (humidity * 0.4008) - 4.7844)
-        humidity = humidity + (temp - 30) * (humidity * 0.00237 + 0.1973)
+#        self._bus.write_byte_data(0x40, 0x03, 0x01)
+#        time.sleep(0.5)
+#        data = self._bus.read_i2c_block_data(0x40, 0x00, 3)
+#        humidity = ((data[1] * 256 + (data[2] & 0xF0)) / 16.0) / 16.0 - 24.0
+#        humidity = humidity - (((humidity * humidity) * (-0.00393)) + (humidity * 0.4008) - 4.7844)
+#        humidity = humidity + (temp - 30) * (humidity * 0.00237 + 0.1973)
 
-        return temp, humidity
+#        return temp, humidity
 
-    def read(self, command):
-        temp, humidity = self.get_temperature_humidity()
-        return { 'temperature': temp, 'humidity': humidity }
+#    def read(self, command):
+#        temp, humidity = self.get_temperature_humidity()
+#        return { 'temperature': temp, 'humidity': humidity }
 
-    def summary(self):
-        return { 'type': 'TH02' }
+#    def summary(self):
+#        return { 'type': 'TH02' }
 
 
 def device_read_cb(args):
@@ -153,10 +153,10 @@ def device_summary_cb(args):
 
 
 if __name__ == "__main__":
-    DeviceManager.add('lights', RelayDevice(16))
-    DeviceManager.add('pumps', RelayDevice(5))
-    DeviceManager.add('temp', TH02Device())
-    DeviceManager.add('camera', CameraDevice())
+    DeviceManager.add('lights', RelayDevice(8)) #light rela on pin 8
+    DeviceManager.add('pumps', RelayDevice(10)) #pump relay on pin 10
+#    DeviceManager.add('temp', TH02Device())
+#    DeviceManager.add('camera', CameraDevice())
     DeviceManager.add('ev', GroveADCDevice(channel=0))
     
     # print(DeviceManager.get('ev').get_voltage())

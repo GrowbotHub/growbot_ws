@@ -7,5 +7,7 @@
 
     <node pkg="growbothub_tlc" type="pos_controller.py" name="pos_controller" output="screen" />
     <node pkg="growbothub_tlc" type="devices.py" name="devices" output="screen" />
+    <node pkg="growbothub_tlc" type="scheduler.py" name="scheduler" output="screen" />
+    <node pkg="growbothub_tlc" type="I2C.py" name="I2C" output="screen" />
 
 </launch>
