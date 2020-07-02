@@ -1,6 +1,7 @@
 <launch>
     <arg name="dry_run" default="false" />
     <arg name="secured" default="false" />
+    <arg name="web" default="true" />
 
     <env name="DRY_RUN" value="$(optenv DRY_RUN 1)" if="$(eval dry_run)" />
     <env name="DIST_DATA" value="$(optenv DIST_DATA /home/pi/data)" />
@@ -9,5 +10,11 @@
     <node pkg="growbothub_tlc" type="devices.py" name="devices" output="screen" />
     <node pkg="growbothub_tlc" type="scheduler.py" name="scheduler" output="screen" />
     <node pkg="growbothub_tlc" type="I2C.py" name="I2C" output="screen" />
+    <node pkg="growbothub_tlc" type="web.py" name="web" output="screen" if="$(eval web)" />
 
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
+	<arg name="ssl" value="$(eval secured)" />
+	<arg name="keyfile" value="/etc/letsencrypt/keys/0000_key-certbot.pem" />
+	<arg name="certfile" value="/etc/letsencrypt/csr/0000_csr-certbot.pem" />
+    </include>
 </launch>

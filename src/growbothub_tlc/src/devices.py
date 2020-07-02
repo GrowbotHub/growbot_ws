@@ -103,7 +103,31 @@ class GroveADCDevice(DeviceInterface):
     def summary(self):
         return { 'type': 'adc' }
 
+class ArduinoNano(DeviceInterface):
+    def __init__(self, bus=None):
+	self._bus = bus
+	if self._bus is None:
+		try:
+			self._bus =smbus.SMBus(1)
+		except Exception as e:
+			print(e)
+    def get_sensor_data(self):
+	DEVICE_ADDRESS = 0x07 #address of first arduino, each arduino should have a different address
+	value = 0x21 #send code to arduino
+	self._bus.write_byte_data(DEVICE_ADDRESS,0,value)
+	time.sleep(0.5)
+	data = self._bus.read_i2c_block_data(DEVICE_ADDRESS,0,6) #Can be splitted in different call
+	temp = data[1]+data[2]
+	ec = data[3]+data[4]
+	ph = data[5]+data[6]
+	return temp,ec,ph
 
+    def read(self,command):
+	data = self.get_sensor_data()
+	return { 'temperature': temp, 'electroconductivity': ec, 'ph': ph }
+
+    def summary(self):
+	return { 'type': 'ArduinoNano' }
 #class TH02Device(DeviceInterface):
 #    def __init__(self, bus=None):
 #        self._bus = bus
