@@ -117,9 +117,9 @@ class ArduinoNano(DeviceInterface):
 	self._bus.write_byte_data(DEVICE_ADDRESS,0,value)
 	time.sleep(0.5)
 	data = self._bus.read_i2c_block_data(DEVICE_ADDRESS,0,6) #Can be splitted in different call
-	temp = data[1]+data[2]
-	ec = data[3]+data[4]
-	ph = data[5]+data[6]
+	temp = data[1]+data[2]/100
+	ec = data[3]+data[4]/100
+	ph = data[5]+data[6]/100
 	return temp,ec,ph
 
     def read(self,command):
