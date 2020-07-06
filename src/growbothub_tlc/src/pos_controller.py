@@ -12,7 +12,7 @@ GPIO.setmode(GPIO.BOARD)
 pos = 0
 pwm = None
 target = 0
-posSaveFileName = "/home/pi/ros_catkin_ws/src/growbot_rpi/sensorLog/posWhenShutdown.txt"
+posSaveFileName = "/home/pi/growbot_ws/src/growbothub_tlc/sensorLog/posWhenShutdown.txt"
 try:
 	f = open(posSaveFileName, "r")
 	pos = int(f.read())
